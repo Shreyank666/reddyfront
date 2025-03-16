@@ -1,17 +1,14 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
+// This file is only used in development mode
+// In production, the REACT_APP_API_URL environment variable is used
 module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'https://zplay1.in/sports/api/v1/events',
+      target: process.env.REACT_APP_API_URL || 'http://localhost:5000',
       changeOrigin: true,
-      pathRewrite: {
-        '^/api/matches/inplay': '/matches/inplay',
-        '^/api/matches/([^/]+)': '/matches/$1',
-        '^/api/match/([^/]+)': '/match/$1',
-        '^/api/sports': '/sports'
-      },
+      secure: false,
       onProxyReq: (proxyReq, req, res) => {
         // Add any required headers here
         proxyReq.setHeader('Accept', 'application/json');
