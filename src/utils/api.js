@@ -1,8 +1,11 @@
 import axios from 'axios';
 
+// Get the API URL from environment variables
+const API_URL = process.env.REACT_APP_API_URL || 'https://reddybackend.vercel.app';
+
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://reddybackend.vercel.app/',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
