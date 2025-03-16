@@ -1,9 +1,12 @@
 import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
-import axios from 'axios';
+import api, { getMatches, getMatchDetails } from '../utils/api';
 
 const BettingContext = createContext();
 
 export const useBetting = () => useContext(BettingContext);
+
+// Get the API URL from environment variables
+const API_URL = process.env.REACT_APP_API_URL || 'https://reddybackend.vercel.app';
 
 export const BettingProvider = ({ children }) => {
   // State
@@ -310,12 +313,11 @@ export const BettingProvider = ({ children }) => {
     setError(null);
     
     try {
-      const response = await axios.get(`/api/matches/${sportId}`);
-      const matchesData = response.data.data || [];
-      console.log(`API response for sport ${sportId}:`, response.data);
-      console.log(`Matches data structure:`, matchesData);
-      setMatches(matchesData);
-      return matchesData;
+      const matchesData = await getMatches(sportId);
+      console.log(`API response for sport ${sportId}:`, matchesData);
+      console.log(`Matches data structure:`, matchesData.data || []);
+      setMatches(matchesData.data || []);
+      return matchesData.data || [];
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch matches');
       console.error('Error fetching matches:', err);
@@ -413,8 +415,7 @@ export const BettingProvider = ({ children }) => {
     setError(null);
     
     try {
-      const response = await axios.get(`/api/match/${eventId}`);
-      const matchData = response.data;
+      const matchData = await getMatchDetails(eventId);
       
       console.log('Raw match data:', matchData);
       
@@ -486,8 +487,8 @@ export const BettingProvider = ({ children }) => {
         setActiveSubscription(eventId);
       }
     } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch match details');
       console.error('Error fetching match details:', err);
-      setError('Failed to load match details. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -658,7 +659,7 @@ export const BettingProvider = ({ children }) => {
     setError(null);
     
     try {
-      const response = await axios.get('/api/matches/inplay');
+      const response = await api.get('/api/matches/inplay');
       const inplayMatches = response.data.data || [];
       console.log('API response for inplay matches:', response.data);
       console.log('Inplay matches data structure:', inplayMatches);
