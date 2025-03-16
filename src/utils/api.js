@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: process.env.REACT_APP_API_URL || 'https://reddybackend.vercel.app/',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -19,17 +19,17 @@ api.interceptors.response.use(
 
 // API functions
 export const getSports = async () => {
-  const response = await api.get('/sports');
+  const response = await api.get('/api/sports');
   return response.data;
 };
 
 export const getMatches = async (sportId) => {
-  const response = await api.get(`/matches/${sportId}`);
+  const response = await api.get(`/api/matches/${sportId}`);
   return response.data;
 };
 
 export const getMatchDetails = async (eventId) => {
-  const response = await api.get(`/match/${eventId}`);
+  const response = await api.get(`/api/match/${eventId}`);
   return response.data;
 };
 
